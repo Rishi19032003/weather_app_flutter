@@ -1,11 +1,38 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:weather_app/additional_info_item.dart';
 import 'package:weather_app/weather_forecast_material.dart';
+import 'package:http/http.dart' as http;
 
-class WeatherScreen extends StatelessWidget {
+class WeatherScreen extends StatefulWidget {
   const WeatherScreen({super.key});
+
+  @override
+  State<WeatherScreen> createState() => _WeatherScreenState();
+}
+
+class _WeatherScreenState extends State<WeatherScreen> {
+  @override
+  void initState() {
+    super.initState();
+    getCurrentWeather();
+  }
+
+  Future getCurrentWeather() async {
+    try {
+      String cityName = 'London';
+      String apiKey = dotenv.env['OPENWEATHER_API_KEY']!;
+      final res = await http.get(
+        Uri.parse(
+          'http://api.openweathermap.org/data/2.5/forecast?q=$cityName&APPID=$apiKey',
+        ),
+      );
+    } catch (e) {
+      throw e.toString();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +112,7 @@ class WeatherScreen extends StatelessWidget {
                   HourlyForecastItem(
                     time: '01:00',
                     temperature: '3.12',
-                    icon: Icons.cloud,
+                    icon: Icons.sunny,
                   ),
                   HourlyForecastItem(
                     time: '02:00',
